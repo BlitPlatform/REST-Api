@@ -109,3 +109,6 @@ venv.bak/
 
 # Visual Studio Code
 .vscode
+
+# TMP Files Folder
+tmp/
