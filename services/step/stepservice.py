@@ -2,16 +2,8 @@ from collections.abc import Iterable
 from io import StringIO
 import os
 import cadquery as cq
-
-TMP_STEP_FILE_PATH = "/tmp/stl_files/"
-
-"""
-Switch to current tmp folder and return the path
-"""
-def switch_to_tmp():
-    _dir = os.getcwd()
-    os.chdir(_dir + TMP_STEP_FILE_PATH)
-    return os.getcwd()
+from services.common.zipping.zipperhelper import zipfiles
+from services.common.diroperations.dirservice import create_user_directory
 
 
 def dfs(graph, node, visited_leafs):
@@ -39,12 +31,14 @@ Generates the stl file entities
 """
 def step2tsl(step_file, clear=True) -> dict:
 
+    HARDCODED_USER_ID = 'user2'
+
+    user_id = HARDCODED_USER_ID
 
      #Decode from bytes to string
     _step_file = step_file.decode("utf8")
 
-    _dir = switch_to_tmp()
-
+    _dir = create_user_directory(HARDCODED_USER_ID)
     #Write STEP contents into tmp file
     with open(_dir + "/patch.step", "w", newline='') as stream:
         stream.write(_step_file)
@@ -53,7 +47,7 @@ def step2tsl(step_file, clear=True) -> dict:
     model = cq.importers.importStep(_dir + "/patch.step")
 
     # Export full model as a single STL
-    cq.exporters.export(model, _dir+"/model.stl")
+    #cq.exporters.export(model, _dir+"/model.stl")
     
     compounds = model.objects
     shapes = dfs(compounds, compounds[0], set())
@@ -66,9 +60,11 @@ def step2tsl(step_file, clear=True) -> dict:
 
     sorted_by_mass, sorted_by_name = zip(*sorted(zip(sorted_by_mass, sorted_by_name)))
 
+    file_names = []
     for i, obj in enumerate(sorted_by_name):
         file_name = _dir+"/obj_"+str(i)+".stl"
+        file_names.append(file_name)
         obj.exportStl(file_name)
-
-    return {}
+    
+    return zipfiles(file_names, user_id)
 
