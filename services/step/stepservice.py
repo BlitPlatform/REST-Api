@@ -35,20 +35,14 @@ def step2tsl(step_file, clear=True) -> dict:
 
     user_id = HARDCODED_USER_ID
 
-     #Decode from bytes to string
-    _step_file = step_file.decode("utf8")
-
     _dir = create_user_directory(HARDCODED_USER_ID)
     #Write STEP contents into tmp file
     with open(_dir + "/patch.step", "w", newline='') as stream:
-        stream.write(_step_file)
+        stream.write(step_file)
         stream.close()
 
     model = cq.importers.importStep(_dir + "/patch.step")
 
-    # Export full model as a single STL
-    #cq.exporters.export(model, _dir+"/model.stl")
-    
     compounds = model.objects
     shapes = dfs(compounds, compounds[0], set())
 

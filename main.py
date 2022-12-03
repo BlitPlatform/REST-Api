@@ -1,7 +1,9 @@
 from fastapi import Depends, FastAPI
 
 from dependencies import get_token_header
-from routers import step, stl
+from routers.stl import stl
+from routers.step import step
+
 
 #app = FastAPI(dependencies=[Depends(get_query_token)])
 app = FastAPI()
