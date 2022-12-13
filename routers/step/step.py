@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from fastapi.responses import Response
 from dependencies import get_token_header
-from models.datamodel import Data
+from models.datamodel import StepData
 from services.common.decoders.b64helper import decode_from_b64
 from services.step.stepservice import step2tsl
 from services.common.diroperations.dirservice import remove_user_directory
@@ -15,12 +15,13 @@ router = APIRouter(
 )
 
 @router.post("/upload")
-async def handle_step(background_tasks: BackgroundTasks, data: Data) -> Response:
-    if data.filename is None:
+async def handle_step(background_tasks: BackgroundTasks, data: StepData) -> Response:
+    file = data.file
+    if file.filename is None:
         raise HTTPException(
             status_code=422, detail="The filedata parameter is missing."
         )
-    step = decode_from_b64(data.filedata)
+    step = decode_from_b64(file.filedata)
     #print(step)
     zip_file = step2tsl(step)
 

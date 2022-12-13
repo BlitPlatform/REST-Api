@@ -4,18 +4,20 @@ import os
 
 STL_PATH = os.getcwd() + "tmp/stl_files/"
 
-def generate_mesh(
+def generate_mesh(stl_files, options):
+    [print(file) for file in stl_files]
+    print(options)
+
+def compute(
     f_min,
     f_max,
     port,
     pml_n,
-    step_file,
     stl="model.stl",
     factor=30,
     factor_space=15,
     fraction=500,
     res_fraction=[6,6,6],
-    cell_ratio=2,
     n=[3, 3, 3],
 ):
 
@@ -35,11 +37,6 @@ def generate_mesh(
     #print(nodes)
 
     # Generate tetrahedral mesh (for large models)
-    if False and nodes > 1000:
-        os.system("gmsh -2 data/" + step_file + " -o data/tmp/" + stl)
-
-        # Re-fetch node coordinates (coarser model)
-        vertices = trimesh.load("data/tmp/" + stl).vertices
 
     vertices = [vertices[:, 0], vertices[:, 1], vertices[:, 2]]
 

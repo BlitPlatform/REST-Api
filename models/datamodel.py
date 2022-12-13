@@ -1,6 +1,5 @@
 from pydantic import BaseModel
+from models.filemodel import FileData
 
-
-class Data(BaseModel):
-    filename: str
-    filedata: str
+class StepData(BaseModel):
+    file: FileData
